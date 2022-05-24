@@ -4,7 +4,7 @@ import TweetStorage from "./artifacts/TweetStorage.json";
 import TweetController from "./artifacts/TweetController.json";
 import { getUserInfo } from "./users";
 
-export const createTweet = async (text) => {
+export const createTweet = async (text, hash) => {
   const controller = await getInstance(TweetController);
 
   try {
@@ -12,7 +12,7 @@ export const createTweet = async (text) => {
     await ethereum.enable();
     const addresses = await eth.getAccounts();
 
-    const result = await controller.createTweet(text, {
+    const result = await controller.createTweet(text, hash, {
       from: addresses[0],
     });
 
@@ -26,7 +26,7 @@ export const getTweetInfo = async (tweetId) => {
   const storage = await getInstance(TweetStorage);
   const tweet = await storage.tweets.call(tweetId);
 
-  const { id, text, userId, postedAt } = tweet;
+  const { id, text, userId, postedAt, postHash } = tweet;
 
   // Parse the data to make it look nice:
   return {
@@ -34,6 +34,7 @@ export const getTweetInfo = async (tweetId) => {
     userId: parseInt(userId),
     text,
     postedAt: parseInt(postedAt),
+    postHash,
   };
 };
 

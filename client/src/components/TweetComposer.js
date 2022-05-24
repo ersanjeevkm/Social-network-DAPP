@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { createTweet } from "../web3/tweets";
+import { Context } from "../context/Context";
+
+import { SyncTweets } from "../context/Actions";
+
 import Button from "./Button";
 
 export default ({ onClose }) => {
   const [text, setText] = useState("");
   const [disabled, setDisabled] = useState(true);
+
+  const { dispatch } = useContext(Context);
 
   const handleChange = (e) => {
     setText(e.target.value);
@@ -13,9 +19,11 @@ export default ({ onClose }) => {
 
   const post = async () => {
     try {
-      const res = await createTweet(text);
-      if (res.tx !== undefined) alert("Your tweet was posted!");
-      else throw res.message;
+      const res = await createTweet(text, "");
+      if (res.tx !== undefined) {
+        alert("Your tweet was posted!");
+        dispatch(SyncTweets());
+      } else throw res.message;
     } catch (err) {
       alert(`Sorry, we couldn't post your tweet: ${err}`);
     }

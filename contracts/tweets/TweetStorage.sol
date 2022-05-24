@@ -12,22 +12,24 @@ contract TweetStorage is BaseStorage {
         string text;
         uint256 userId;
         uint256 postedAt;
+        string postHash;
     }
 
     uint256 latestTweetId = 0;
 
-    function createTweet(uint256 _userId, string memory _text)
-        public
-        onlyController
-        returns (uint256)
-    {
+    function createTweet(
+        uint256 _userId,
+        string memory _text,
+        string memory postHash
+    ) public onlyController returns (uint256) {
         latestTweetId++;
 
         tweets[latestTweetId] = Tweet(
             latestTweetId,
             _text,
             _userId,
-            block.timestamp
+            block.timestamp,
+            postHash
         );
         userTweetIds[_userId].push(latestTweetId);
         tweetIds.push(latestTweetId);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 import { createUser } from "../web3/users";
+import ipfs from "../ipfs";
 
 const Input = ({ title, value, onChange }) => (
   <div className="border">
@@ -47,20 +48,48 @@ export default function RegForm({ onClose }) {
     username: "",
     gravatarEmail: "",
     bio: "",
+    profile: null,
   });
 
-  const updateField = (fieldName, e) => {
-    formState[fieldName] = e.target.value;
+  const [hash, setHash] = useState("");
 
-    setForm(formState);
+  const updateField = (fieldName, e) => {
+    e.preventDefault();
+
+    if (fieldName === "profile") {
+      const file = e.target.files[0];
+      const reader = new window.FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onloadend = () => {
+        formState[fieldName] = Buffer(reader.result);
+        setForm(formState);
+      };
+    } else {
+      formState[fieldName] = e.target.value;
+      setForm(formState);
+    }
   };
 
   const createuser = async (e) => {
     e.preventDefault();
 
+    var hash = "";
+
+    if (formState["profile"]) {
+      try {
+        const uploadResult = await ipfs.add(Buffer.from(formState["profile"]));
+        console.log(uploadResult.path);
+        hash = uploadResult.path;
+      } catch (e) {
+        return alert(e);
+      }
+    }
+
     for (let key in formState) {
-      if (!formState[key]) {
-        return alert(`You must fill in your ${key}!`);
+      if (key !== "profile") {
+        if (!formState[key]) {
+          return alert(`You must fill in your ${key}!`);
+        }
       }
     }
 
@@ -72,11 +101,14 @@ export default function RegForm({ onClose }) {
         firstName,
         lastName,
         bio,
-        gravatarEmail
+        gravatarEmail,
+        hash
       );
 
-      if (res.tx !== undefined) alert(`Your user has been created!`);
-      else throw res.message;
+      if (res.tx !== undefined) {
+        alert(`Your user has been created!`);
+        window.location.reload();
+      } else throw res.message;
     } catch (err) {
       alert(`Sorry, we couldn't create your user: ${err}`);
     }
@@ -98,12 +130,19 @@ export default function RegForm({ onClose }) {
       />
 
       <Input
-        title="Gravatar email"
+        title="Email"
         type="email"
         onChange={(e) => updateField("gravatarEmail", e)}
       />
 
       <Input title="Bio" onChange={(e) => updateField("bio", e)} />
+
+      <label>Profile Pic</label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => updateField("profile", e)}
+      />
 
       <footer>
         <Button type="submit">Create</Button>

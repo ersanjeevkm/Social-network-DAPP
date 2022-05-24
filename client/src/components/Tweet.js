@@ -5,11 +5,11 @@ import Avatar from "./Avatar";
 
 export default ({ tweet }) => {
   const { text, user, postedAt } = tweet;
-  const { username, gravatarEmail } = user;
+  const { username, gravatarEmail, profileHash } = user;
 
   return (
     <div className="tweet">
-      <Avatar size={42} email={gravatarEmail} />
+      <Avatar size={42} src={profileHash} />
 
       <div className="info">
         <div className="top">

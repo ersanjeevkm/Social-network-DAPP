@@ -5,6 +5,11 @@ const Reducer = (state, action) => {
         ...state,
         user: action.payload,
       };
+    case "syncTweets":
+      return {
+        ...state,
+        syncTweets: !state.syncTweets,
+      };
     default:
       return state;
   }

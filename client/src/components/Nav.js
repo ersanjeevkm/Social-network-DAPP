@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import ComposeIcon from "../icons/compose.svg";
+import Avatar from "./Avatar";
 
 export default ({ userInfo, toggleComposeModal }) => {
-  const { firstName, lastName, username } = userInfo;
+  const { firstName, lastName, username, profileHash } = userInfo;
+
+  console.log(profileHash);
 
   return (
     <nav>
@@ -12,6 +15,8 @@ export default ({ userInfo, toggleComposeModal }) => {
       <Link to={`/profile/${username}`}>
         <a className="username">
           <span>
+            <Avatar size={42} src={profileHash} />
+            &ensp;
             {firstName} {lastName}
           </span>
         </a>

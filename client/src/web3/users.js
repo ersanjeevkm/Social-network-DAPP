@@ -7,7 +7,8 @@ export const getUserInfo = async (userId) => {
   const storage = await getInstance(UserStorage);
   const profile = await storage.profiles.call(userId);
 
-  const { id, username, firstName, lastName, bio, gravatarEmail } = profile;
+  const { id, username, firstName, lastName, bio, gravatarEmail, profileHash } =
+    profile;
 
   if (!parseInt(id)) throw "Couldn't find user!";
 
@@ -18,6 +19,7 @@ export const getUserInfo = async (userId) => {
     lastName: Web3.utils.toUtf8(lastName),
     bio,
     gravatarEmail,
+    profileHash,
   };
 };
 
@@ -26,7 +28,8 @@ export const createUser = async (
   firstName,
   lastName,
   bio,
-  gravatarEmail
+  gravatarEmail,
+  hash
 ) => {
   try {
     const { ethereum } = window;
@@ -45,6 +48,7 @@ export const createUser = async (
       lastName,
       bio,
       gravatarEmail,
+      hash,
       {
         from: addresses[0],
       }

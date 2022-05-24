@@ -5,6 +5,7 @@ import { getLoggedInUserId, getUserInfo } from "../web3/users";
 
 const INIT_STATE = {
   user: null,
+  syncTweets: false,
 };
 
 export const Context = createContext(INIT_STATE);
@@ -30,6 +31,17 @@ export const ContextProvider = ({ children }) => {
 
     getLogin();
   }, []);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("chainChanged", () => {
+        window.location.reload();
+      });
+      window.ethereum.on("accountsChanged", () => {
+        window.location.reload();
+      });
+    }
+  });
 
   return (
     <Context.Provider value={{ ...state, dispatch }}>

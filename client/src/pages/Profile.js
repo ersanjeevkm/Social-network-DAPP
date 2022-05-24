@@ -60,7 +60,7 @@ function ProfilePage() {
               <h5 className="username">@{user.username}</h5>
               <h5 className="desc">{user.bio}</h5>
             </div>
-            <Avatar size={AVATAR_SIZE} />
+            <Avatar size={AVATAR_SIZE} src={user.profileHash} />
             <h2>
               {user.firstName}'s tweets ({tweets.length})
             </h2>

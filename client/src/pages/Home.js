@@ -1,3 +1,6 @@
+import { useState, useEffect, useContext } from "react";
+import { Context } from "../context/Context";
+
 import Center, { Page } from "../components/Layout";
 import {
   getLatestTweetIds,
@@ -6,10 +9,10 @@ import {
 } from "../web3/tweets";
 
 import TweetList from "../components/TweetList";
-import { useState, useEffect } from "react";
 
 export default () => {
   const [tweets, setTweeets] = useState([]);
+  const { syncTweets } = useContext(Context);
 
   useEffect(() => {
     const loadLatestTweets = async () => {
@@ -25,7 +28,7 @@ export default () => {
     };
 
     loadLatestTweets();
-  }, []);
+  }, [syncTweets]);
 
   return (
     <Page>
