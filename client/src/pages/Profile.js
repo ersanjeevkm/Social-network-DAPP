@@ -1,8 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Context } from "../context/Context";
+import { SyncTweets } from "../context/Actions";
 
 import Center, { Page } from "../components/Layout";
 import Avatar from "../components/Avatar";
+import Web3 from "web3";
 
 import { getUserIdFromUsername, getUserInfo } from "../web3/users";
 import TweetList from "../components/TweetList";
@@ -16,10 +19,13 @@ import {
 const AVATAR_SIZE = 113;
 
 function ProfilePage() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const { username } = useParams();
+  const { syncTweets } = useContext(Context);
 
   const [tweets, setTweets] = useState([]);
+  const [tips, setTips] = useState(0);
+  var totTips = 0;
 
   useEffect(() => {
     const loadUser = async () => {
@@ -36,11 +42,18 @@ function ProfilePage() {
       });
       const userTweets = await loadTweetsFromTweetPromises(tweetPromises);
       setTweets(userTweets);
+
+      totTips = 0;
+      userTweets.map((tweet) => {
+        totTips += tweet.tipAmount;
+      });
+
+      setTips(totTips);
     };
 
     loadUser();
-    user && loadTweets();
-  }, [user]);
+    loadTweets();
+  }, [username, user?.id, syncTweets]);
 
   return (
     <Page>
@@ -59,8 +72,11 @@ function ProfilePage() {
               </h1>
               <h5 className="username">@{user.username}</h5>
               <h5 className="desc">{user.bio}</h5>
+              <small>
+                TOTAL TIPS: {Web3.utils.fromWei(tips.toString(), "Ether")} ETH
+              </small>
             </div>
-            <Avatar size={AVATAR_SIZE} src={user.profileHash} />
+            <Avatar src={user.profileHash} />
             <h2>
               {user.firstName}'s tweets ({tweets.length})
             </h2>

@@ -4,14 +4,18 @@ import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 
+import { useContext } from "react";
+import { Context } from "./context/Context";
+
 function App() {
+  const { user } = useContext(Context);
+
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={user ? <Home /> : <Index />} />
           <Route path="/profile/:username" element={<Profile />} />
-          <Route path="/feed" element={<Home />} />
         </Routes>
       </div>
     </BrowserRouter>

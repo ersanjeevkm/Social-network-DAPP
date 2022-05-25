@@ -6,6 +6,7 @@ contract UserStorage is BaseStorage {
     mapping(uint256 => Profile) public profiles;
     mapping(address => uint256) public addresses;
     mapping(bytes32 => uint256) public usernames;
+    mapping(uint256 => address) public uidtoaddr;
 
     struct Profile {
         uint256 id;
@@ -25,9 +26,9 @@ contract UserStorage is BaseStorage {
         bytes32 _firstName,
         bytes32 _lastName,
         string memory _bio,
-        string memory _gravatarEmail, 
+        string memory _gravatarEmail,
         string memory _profileHash
-    ) public onlyController returns (uint256 _newUserId) {
+    ) public onlyController returns (uint256) {
         latestUserId++;
 
         profiles[latestUserId] = Profile(
@@ -36,12 +37,13 @@ contract UserStorage is BaseStorage {
             _firstName,
             _lastName,
             _bio,
-            _gravatarEmail, 
+            _gravatarEmail,
             _profileHash
         );
 
         addresses[_address] = latestUserId;
         usernames[_username] = latestUserId;
+        uidtoaddr[latestUserId] = _address;
 
         return latestUserId;
     }

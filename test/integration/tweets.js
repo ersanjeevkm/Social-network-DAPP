@@ -18,14 +18,15 @@ contract("tweets", () => {
       firstName,
       lastName,
       "I like building stuff",
-      "example@example.com"
+      "example@example.com",
+      ""
     );
   });
 
   it("can create tweet with controller", async () => {
     const controller = await TweetController.deployed();
 
-    const tx = await controller.createTweet("Hello world!");
+    const tx = await controller.createTweet("Hello world!", "");
 
     assert.isOk(tx);
   });
@@ -34,7 +35,7 @@ contract("tweets", () => {
     const storage = await TweetStorage.deployed();
 
     try {
-      const tx = await storage.createTweet(1, "tristan");
+      const tx = await storage.createTweet(1, "tristan", "");
       assert.fail();
     } catch (err) {
       assertVMException(err);
@@ -45,12 +46,13 @@ contract("tweets", () => {
     const storage = await TweetStorage.deployed();
 
     const tweet = await storage.tweets.call(1); // Get the data
-    const { id, text, userId } = tweet; // Destructure the data
+    const { id, text, userId, postHash } = tweet; // Destructure the data
 
     // Check if the different parts contain the expected values:
     assert.equal(parseInt(id), 1);
     assert.equal(text, "Hello world!");
     assert.equal(parseInt(userId), 1);
+    assert.equal(postHash, "");
   });
 
   it("can get all tweets IDs from user", async () => {

@@ -12,7 +12,7 @@ contract UserController is BaseController {
         string memory _bio,
         string memory _gravatarEmail,
         string memory _profileHash
-    ) public returns (uint256 _newUserId) {
+    ) public returns (uint256) {
         ContractManager _manager = ContractManager(managerAddr);
 
         address _userStorageAddr = _manager.getAddress("UserStorage");

@@ -51,19 +51,22 @@ export default function RegForm({ onClose }) {
     profile: null,
   });
 
-  const [hash, setHash] = useState("");
-
   const updateField = (fieldName, e) => {
     e.preventDefault();
 
     if (fieldName === "profile") {
       const file = e.target.files[0];
-      const reader = new window.FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onloadend = () => {
-        formState[fieldName] = Buffer(reader.result);
+      if (file) {
+        const reader = new window.FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = () => {
+          formState[fieldName] = Buffer(reader.result);
+          setForm(formState);
+        };
+      } else {
+        formState[fieldName] = null;
         setForm(formState);
-      };
+      }
     } else {
       formState[fieldName] = e.target.value;
       setForm(formState);

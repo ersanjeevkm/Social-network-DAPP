@@ -13,6 +13,7 @@ contract TweetStorage is BaseStorage {
         uint256 userId;
         uint256 postedAt;
         string postHash;
+        uint256 tipAmount;
     }
 
     uint256 latestTweetId = 0;
@@ -29,7 +30,8 @@ contract TweetStorage is BaseStorage {
             _text,
             _userId,
             block.timestamp,
-            postHash
+            postHash,
+            0
         );
         userTweetIds[_userId].push(latestTweetId);
         tweetIds.push(latestTweetId);
@@ -45,7 +47,18 @@ contract TweetStorage is BaseStorage {
         return userTweetIds[_userId];
     }
 
-    function getNumTweets() public view returns (uint256 _numTweets) {
+    function getNumTweets() public view returns (uint256) {
         return tweetIds.length;
+    }
+
+    function tipPost(uint256 _id, address _authorAddr)
+        public
+        payable
+        onlyController
+    {
+        address payable _author = payable(_authorAddr);
+        _author.transfer(msg.value);
+
+        tweets[_id].tipAmount = tweets[_id].tipAmount + msg.value;
     }
 }

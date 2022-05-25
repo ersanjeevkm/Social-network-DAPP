@@ -23,4 +23,35 @@ contract TweetController is BaseController {
 
         return _tweetStorage.createTweet(_userId, _text, _postHash);
     }
+
+    function tipPost(uint256 _id) public payable {
+        ContractManager _manager = ContractManager(managerAddr);
+
+        address _tweetStorageAddr = _manager.getAddress("TweetStorage");
+        TweetStorage _tweetStorage = TweetStorage(_tweetStorageAddr);
+
+        require(_id > 0 && _id <= _tweetStorage.getNumTweets());
+
+        (
+            uint256 id,
+            string memory text,
+            uint256 userId,
+            uint256 postedAt,
+            string memory postHash,
+            uint256 tipAmount
+        ) = _tweetStorage.tweets(_id);
+
+        address _userStorageAddr = _manager.getAddress("UserStorage");
+        UserStorage _userStorage = UserStorage(_userStorageAddr);
+
+        require(
+            _userStorage.addresses(msg.sender) != 0 &&
+                _userStorage.uidtoaddr(userId) != address(0)
+        );
+
+        _tweetStorage.tipPost{value: msg.value}(
+            _id,
+            _userStorage.uidtoaddr(userId)
+        );
+    }
 }

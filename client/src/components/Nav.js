@@ -5,8 +5,6 @@ import Avatar from "./Avatar";
 export default ({ userInfo, toggleComposeModal }) => {
   const { firstName, lastName, username, profileHash } = userInfo;
 
-  console.log(profileHash);
-
   return (
     <nav>
       <button onClick={toggleComposeModal}>

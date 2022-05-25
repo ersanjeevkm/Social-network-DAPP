@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { createTweet } from "../web3/tweets";
 import { Context } from "../context/Context";
+import ipfs from "../ipfs";
 
 import { SyncTweets } from "../context/Actions";
 
@@ -8,6 +9,7 @@ import Button from "./Button";
 
 export default ({ onClose }) => {
   const [text, setText] = useState("");
+  const [profile, setProfile] = useState("");
   const [disabled, setDisabled] = useState(true);
 
   const { dispatch } = useContext(Context);
@@ -17,9 +19,36 @@ export default ({ onClose }) => {
     setDisabled(e.target.value === "");
   };
 
+  const updatePicField = (e) => {
+    e.preventDefault();
+
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new window.FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onloadend = () => {
+        setProfile(Buffer(reader.result));
+      };
+    } else {
+      setProfile("");
+    }
+  };
+
   const post = async () => {
+    var hash = "";
+
+    if (profile) {
+      try {
+        const uploadResult = await ipfs.add(Buffer.from(profile));
+        console.log(uploadResult.path);
+        hash = uploadResult.path;
+      } catch (e) {
+        return alert(e);
+      }
+    }
+
     try {
-      const res = await createTweet(text, "");
+      const res = await createTweet(text, hash);
       if (res.tx !== undefined) {
         alert("Your tweet was posted!");
         dispatch(SyncTweets());
@@ -36,6 +65,9 @@ export default ({ onClose }) => {
       <h3>Post a new tweet</h3>
 
       <textarea value={text} onChange={handleChange} maxLength={140} />
+
+      <label>Post Pic: &emsp;</label>
+      <input type="file" accept="image/*" onChange={(e) => updatePicField(e)} />
 
       <Button
         onClick={post}

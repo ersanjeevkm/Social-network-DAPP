@@ -24,7 +24,8 @@ contract TestUserStorage {
                 firstName,
                 lastName,
                 "I like building stuff",
-                "example@example.com"
+                "example@example.com",
+                ""
             ),
             _expectedId,
             "Should create user with ID 1"

@@ -26,7 +26,7 @@ export const getTweetInfo = async (tweetId) => {
   const storage = await getInstance(TweetStorage);
   const tweet = await storage.tweets.call(tweetId);
 
-  const { id, text, userId, postedAt, postHash } = tweet;
+  const { id, text, userId, postedAt, postHash, tipAmount } = tweet;
 
   // Parse the data to make it look nice:
   return {
@@ -35,6 +35,7 @@ export const getTweetInfo = async (tweetId) => {
     text,
     postedAt: parseInt(postedAt),
     postHash,
+    tipAmount: parseInt(tipAmount),
   };
 };
 
@@ -63,7 +64,7 @@ export const loadTweetsFromTweetPromises = async (tweetPromises) => {
   });
 };
 
-export const getLatestTweetIds = async (amount = 20, page = 1) => {
+export const getLatestTweetIds = async (page = 1, amount = 20) => {
   const storage = await getInstance(TweetStorage);
 
   const numTweets = await storage.getNumTweets.call();
@@ -83,4 +84,23 @@ export const getLatestTweetIds = async (amount = 20, page = 1) => {
   const tweetIds = await Promise.all(tweetIdPromises);
 
   return tweetIds;
+};
+
+export const tipPost = async (id, tipAmount) => {
+  const controller = await getInstance(TweetController);
+
+  try {
+    const { ethereum } = window;
+    await ethereum.enable();
+    const addresses = await eth.getAccounts();
+
+    const result = await controller.tipPost(id, {
+      from: addresses[0],
+      value: tipAmount,
+    });
+
+    return result;
+  } catch (err) {
+    return err;
+  }
 };

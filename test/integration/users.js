@@ -24,7 +24,8 @@ contract("users", () => {
       firstName,
       lastName,
       "I like building stuff",
-      "example@example.com"
+      "example@example.com",
+      ""
     );
 
     assert.isOk(tx);
@@ -44,7 +45,8 @@ contract("users", () => {
         firstName,
         lastName,
         "I like building stuff",
-        "example@example.com"
+        "example@example.com",
+        ""
       );
       assert.fail();
     } catch (err) {
