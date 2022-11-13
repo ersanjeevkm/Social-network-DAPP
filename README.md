@@ -4,6 +4,6 @@ An ethereum based decentralised social media application built using smart contr
 
 ## Contributors :-
 
-- Sachin Raghul T
 - Sanjeev KM
+- Sachin Raghul T
 - Srivatsav R
